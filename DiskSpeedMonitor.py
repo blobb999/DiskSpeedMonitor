@@ -56,12 +56,17 @@ class DiskSpeedMonitor(tk.Tk):
             def update_labels():
                 current_disk_io_counters = get_disk_io_counters()
                 for disk_name, (read_bytes, write_bytes) in current_disk_io_counters.items():
-                    prev_read_bytes, prev_write_bytes = prev_disk_io_counters[disk_name]
-                    read_speed = (read_bytes - prev_read_bytes) / (1024 * 1024) / interval
-                    write_speed = (write_bytes - prev_write_bytes) / (1024 * 1024) / interval
-                    disk_index = int(disk_name.split("PhysicalDrive")[1])
-                    mount_point = self.partition_info.get(disk_index, "N/A")
-                    self.labels[disk_name].config(text=f"{mount_point}: Read {read_speed:.2f} MB/s, Write {write_speed:.2f} MB/s")
+                    if disk_name in prev_disk_io_counters:
+                        prev_read_bytes, prev_write_bytes = prev_disk_io_counters[disk_name]
+                        read_speed = (read_bytes - prev_read_bytes) / (1024 * 1024) / interval
+                        write_speed = (write_bytes - prev_write_bytes) / (1024 * 1024) / interval
+                        disk_index = int(disk_name.split("PhysicalDrive")[1])
+                        mount_point = self.partition_info.get(disk_index, "N/A")
+                        if disk_name not in self.labels:
+                            label = tk.Label(self, text=f"{mount_point}: Read 0 MB/s, Write 0 MB/s")
+                            label.pack()
+                            self.labels[disk_name] = label
+                        self.labels[disk_name].config(text=f"{mount_point}: Read {read_speed:.2f} MB/s, Write {write_speed:.2f} MB/s")
                 prev_disk_io_counters.update(current_disk_io_counters)
                 self.after(int(interval * 1000), update_labels)
 
