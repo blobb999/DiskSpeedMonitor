@@ -17,7 +17,7 @@ tkinter
 ctypes
 
 Known Issue:
-psutils cant determ drive letters and volume labels of encrypted and mounted drives. Finding a workarround is in progress...
+psutils & wmi cant determ drive letters and volume labels of encrypted and mounted drives. Finding a workarround is in progress...
 1. pyveracrypt discontinued.
 2. no volume label with cmd "wmic logicaldisk get deviceid, volumename, description"
 3. no volume label with module subprocess
